@@ -73,7 +73,7 @@ def recommend(ing):
         for val in value[0]:
             food, ingredients, time, restriction = val.get_children()
             ingredients = ','.join(map(str, ingredients.get_children()))
-            result.append(f'You can cook {food} with {ingredients} in {time}min if you are {restriction}')
+            result.append(f'You can cook {food} with {ingredients} in {time}min if you are {restriction}.')
         return '\n'.join(result)
     except Exception as e:
         raise Exception(f"Error getting recommendations: {str(e)}")
