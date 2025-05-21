@@ -1,6 +1,5 @@
 import os
 import google.generativeai as genai
-from google import genai
 from dotenv import load_dotenv
 from hyperon import *
 
@@ -37,11 +36,10 @@ def extract_ingredients_to_metta(user_input):
             raise Exception("GEMINI_API_KEY not found in environment variables")
 
         # Configure Gemini
-        client = genai.Client(api_key=api_key)
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-2.0-flash')
 
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=f"""
+        response = model.generate_content(f"""
         Extract all food ingredients from this user input, capitalize each one, 
         and format them as a python string of MeTTa expression (space-separated in parentheses).
         Only return the MeTTa expression, nothing else. ensure that each ingredient is in singular format
@@ -56,7 +54,7 @@ def extract_ingredients_to_metta(user_input):
         Input: "my ingredients are tomato, pasta, cheese"
         Output: (Tomato Pasta Cheese)
         If no ingredients found, return: ()
-        you should consider the contect of the input example input: "i have neither banana nor meat" output: ()
+        you should consider the content of the input example input: "i have neither banana nor meat" output: ()
         """,
         )
         return response.text
