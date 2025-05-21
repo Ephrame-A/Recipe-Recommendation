@@ -68,7 +68,7 @@
     <div class="container">
         <h1>Recipe Recommender</h1>
         <div class="input-group">
-            <label for="ingredients">Enter ingredients you have (comma-separated):</label>
+            <label for="ingredients">Enter ingredients you have :</label>
             <input type="text" id="ingredients" name="ingredients" placeholder="e.g., eggs, flour, milk">
         </div>
         <button onclick="getRecommendations()">Get Recommendations</button>
@@ -76,32 +76,33 @@
     </div>
 
     <script>
-        function getRecommendations() {
+        async function getRecommendations() {
             const ingredients = document.getElementById('ingredients').value;
             const resultsDiv = document.getElementById('results');
             
+            if (!ingredients.trim()) {
+                resultsDiv.innerHTML = '<div class="error">Please enter some ingredients!</div>';
+                return;
+            }
+            
             resultsDiv.innerHTML = 'Loading...';
             
-            fetch('/get_recommendations', {
+            const response = await fetch('/get_recommendations', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: `ingredients=${encodeURIComponent(ingredients)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    resultsDiv.innerHTML = `<div class="error">${data.error}</div>`;
-                } else {
-                    let html = `<h3>Extracted Ingredients:</h3><p>${data.ingredients}</p>`;
-                    html += `<h3>Recommendations:</h3><p>${data.recommendations}</p>`;
-                    resultsDiv.innerHTML = html;
-                }
-            })
-            .catch(error => {
-                resultsDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
             });
+            
+            const data = await response.json();
+            if (data.error) {
+                resultsDiv.innerHTML = `<div class="error">${data.error}</div>`;
+            } else {
+                let html = `<h3>Extracted Ingredients:</h3><p>${data.ingredients}</p>`;
+                html += `<h3>Recommendations:</h3><p>${data.recommendations}</p>`;
+                resultsDiv.innerHTML = html;
+            }
         }
     </script>
 </body>

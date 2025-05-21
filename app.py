@@ -11,23 +11,20 @@ def home():
 
 @app.route('/get_recommendations', methods=['POST'])
 def get_recommendations():
-    try:
-        user_input = request.form.get('ingredients', '').strip()
-        if not user_input:
-            return jsonify({'error': 'Please enter some ingredients!'})
-        
-        # Extract ingredients
-        ingredients = extract_ingredients_to_metta(user_input)
-        
-        # Get recommendations
-        result = recommend(ingredients)
-        
-        return jsonify({
-            'ingredients': ingredients,
-            'recommendations': result
-        })
-    except Exception as e:
-        return jsonify({'error': str(e)})
+    user_input = request.form.get('ingredients', '').strip()
+    if not user_input:
+        return jsonify({'error': 'Please enter some ingredients!'})
+    
+    # Extract ingredients
+    ingredients = extract_ingredients_to_metta(user_input)
+    
+    # Get recommendations
+    result = recommend(ingredients)
+    
+    return jsonify({
+        'ingredients': ingredients,
+        'recommendations': result
+    })
 
 if __name__ == '__main__':
     app.run(debug=True) 
